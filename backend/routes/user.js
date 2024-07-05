@@ -52,10 +52,32 @@ const signinBody = zod.object({
     password: zod.string(),
 });
 router.post('/signIn', (req, res) => {
-    const { success } = signinBody.safeParse(req.body);
-    if (!success) {
+    try {
+        const { success } = signinBody.safeParse(req.body);
+        if (!success) {
+            res.status(401).json({
+                message: 'Email does not exist',
+            });
+        }
+        const user = User.findOne({
+            username: req.body.username,
+            password: req.body.password,
+        });
+        if (user) {
+            const token = jwt.sign(
+                {
+                    userId: user._id,
+                },
+                JWT_SECRET
+            );
+            res.json({
+                token: token,
+            });
+            return;
+        }
+    } catch {
         res.status(401).json({
-            message: 'Email does not exist',
+            message: 'No such user exists',
         });
     }
 });
