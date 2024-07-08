@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
 
 mongoose.connect(
-    'mongodb+srv://absa0545:abhisaxy07@cluster0.qnu8g7o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
+    'mongodb+srv://absa0545:abhi123@cluster0.qnu8g7o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    }
 );
 
+// Create a Schema for Users
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -33,9 +38,22 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-// Create a model from the schema
+const accountSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId, // Reference to User model
+        ref: 'User',
+        required: true,
+    },
+    balance: {
+        type: Number,
+        required: true,
+    },
+});
+
+const Account = mongoose.model('Account', accountSchema);
 const User = mongoose.model('User', userSchema);
 
 module.exports = {
     User,
+    Account,
 };
